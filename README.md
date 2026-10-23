@@ -73,7 +73,9 @@ Catatan struktur:
 - Aset pihak ketiga dikelompokkan pada `static/vendor/` sehingga `static/css/` dan `static/js/` hanya berisi file buatan sendiri; semua aset diunduh lokal agar aplikasi tetap tampil benar **tanpa koneksi internet**.
 - `inventaris.db` akan terbentuk sendiri berisi tabel `barang`, tabel `transaksi`, dan data contoh saat aplikasi pertama kali dijalankan. Hapus file tersebut jika ingin mengulang dari data awal.
 
-## Instalasi dan Menjalankan Aplikasi (Windows + VS Code)
+## Instalasi dan Menjalankan Aplikasi
+
+Panduan berikut ditujukan untuk Windows dan Visual Studio Code.
 
 Pastikan **Python 3.10+** sudah terpasang (cek dengan `python --version`).
 
@@ -192,5 +194,4 @@ Gunakan checklist berikut untuk memverifikasi aplikasi sebelum dikumpulkan.
 
 - [ ] Mengakses tautan hapus dengan metode GET langsung tidak menghapus data (route hanya menerima POST)
 - [ ] Memasukkan teks pada kolom angka ditolak dengan pesan yang jelas
-#   i n v e n t a r i s - b a r a n g  
- 
+#
