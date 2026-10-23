@@ -1,0 +1,200 @@
+{% extends "base.html" %}
+
+{% block title %}Laporan Inventaris{% endblock %}
+
+{% block content %}
+<div class="d-flex flex-wrap justify-content-between align-items-center gap-2 mb-4 tanpa-cetak">
+    <div>
+        <h1 class="h4 mb-1 fw-bold">Laporan Inventaris</h1>
+        <p class="text-secondary mb-0">Rekap lengkap data barang dan riwayat transaksi inventaris.</p>
+    </div>
+    <button type="button" class="btn btn-primary" id="tombol-cetak">
+        <i class="bi bi-printer"></i> Cetak Laporan
+    </button>
+</div>
+
+<!-- Judul laporan, hanya tampil pada hasil cetak -->
+<div class="cetak-saja text-center mb-4">
+    <h2 class="h5 fw-bold mb-1">{{ nama_sistem|upper }}</h2>
+    <div class="small">Laporan Inventaris Barang &mdash; Dicetak pada {{ tanggal_hari_ini }}</div>
+</div>
+
+<!-- ===== Filter laporan ===== -->
+<div class="card shadow-sm mb-4 tanpa-cetak">
+    <div class="card-body">
+        <form method="get" action="{{ url_for('laporan') }}" class="row g-2 align-items-end">
+            <div class="col-6 col-lg-2">
+                <label for="kategori" class="form-label small fw-semibold">Kategori</label>
+                <select id="kategori" name="kategori" class="form-select">
+                    <option value="">Semua</option>
+                    {% for k in daftar_kategori %}
+                    <option value="{{ k['kategori'] }}" {% if k['kategori'] == kategori %}selected{% endif %}>{{ k['kategori'] }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div class="col-6 col-lg-2">
+                <label for="kondisi" class="form-label small fw-semibold">Kondisi Barang</label>
+                <select id="kondisi" name="kondisi" class="form-select">
+                    <option value="">Semua</option>
+                    {% for k in KONDISI_BARANG %}
+                    <option value="{{ k }}" {% if k == kondisi %}selected{% endif %}>{{ k }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div class="col-6 col-lg-2">
+                <label for="jenis" class="form-label small fw-semibold">Jenis Transaksi</label>
+                <select id="jenis" name="jenis" class="form-select">
+                    <option value="">Semua</option>
+                    <option value="masuk" {% if jenis_transaksi == 'masuk' %}selected{% endif %}>Barang Masuk</option>
+                    <option value="keluar" {% if jenis_transaksi == 'keluar' %}selected{% endif %}>Barang Keluar</option>
+                </select>
+            </div>
+            <div class="col-6 col-lg-2">
+                <label for="tanggal_dari" class="form-label small fw-semibold">Tanggal Dari</label>
+                <input type="date" id="tanggal_dari" name="tanggal_dari" class="form-control" value="{{ tanggal_dari }}">
+            </div>
+            <div class="col-6 col-lg-2">
+                <label for="tanggal_sampai" class="form-label small fw-semibold">Sampai</label>
+                <input type="date" id="tanggal_sampai" name="tanggal_sampai" class="form-control" value="{{ tanggal_sampai }}">
+            </div>
+            <div class="col-12 col-lg-2 d-flex gap-2">
+                <button type="submit" class="btn btn-primary flex-fill"><i class="bi bi-funnel"></i> Terapkan</button>
+                <a href="{{ url_for('laporan') }}" class="btn btn-outline-secondary" title="Bersihkan filter"><i class="bi bi-x-lg"></i></a>
+            </div>
+        </form>
+    </div>
+</div>
+
+<!-- ===== Ringkasan kondisi barang ===== -->
+<div id="ringkasan-kondisi" class="mb-4">
+    <h2 class="h5 fw-bold mb-3">Ringkasan Kondisi Barang</h2>
+    <div class="row g-3">
+        <div class="col-6 col-lg-3">
+            <div class="card shadow-sm h-100 border-start border-4 border-primary">
+                <div class="card-body">
+                    <div class="text-secondary small fw-semibold">TOTAL BARANG</div>
+                    <div class="fs-3 fw-bold">{{ total_jenis_laporan }}</div>
+                    <div class="text-secondary small">{{ total_unit_laporan }} unit keseluruhan</div>
+                </div>
+            </div>
+        </div>
+        {% for item in ringkasan_kondisi %}
+        <div class="col-6 col-lg-3">
+            <div class="card shadow-sm h-100 border-start border-4 border-{{ badge_kondisi(item.kondisi) }}">
+                <div class="card-body">
+                    <div class="text-secondary small fw-semibold">{{ item.kondisi|upper }}</div>
+                    <div class="fs-3 fw-bold">{{ item.jumlah_jenis }}</div>
+                    <div class="text-secondary small">{{ item.jumlah_unit }} unit barang</div>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+
+<!-- ===== Daftar seluruh barang ===== -->
+<div class="card shadow-sm mb-4">
+    <div class="card-header bg-white py-3 fw-semibold">
+        <i class="bi bi-table me-2 text-primary"></i>Daftar Seluruh Barang
+    </div>
+    <div class="card-body p-0">
+        <div class="table-responsive">
+            <table class="table table-striped table-hover align-middle mb-0">
+                <thead class="table-light">
+                    <tr>
+                        <th>No</th>
+                        <th>Kode Barang</th>
+                        <th>Nama Barang</th>
+                        <th>Kategori</th>
+                        <th>Lokasi</th>
+                        <th>Stok</th>
+                        <th>Kondisi</th>
+                        <th>Tanggal Pencatatan</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% if daftar_barang %}
+                        {% for barang in daftar_barang %}
+                        <tr>
+                            <td>{{ loop.index }}</td>
+                            <td>{{ barang['kode_barang'] }}</td>
+                            <td class="fw-semibold">{{ barang['nama_barang'] }}</td>
+                            <td>{{ barang['kategori'] }}</td>
+                            <td>{{ barang['lokasi'] }}</td>
+                            <td>{{ barang['jumlah_stok'] }}</td>
+                            <td><span class="badge text-bg-{{ badge_kondisi(barang['kondisi']) }}">{{ barang['kondisi'] }}</span></td>
+                            <td class="text-nowrap">{{ barang['tanggal_pencatatan'] }}</td>
+                        </tr>
+                        {% endfor %}
+                    {% else %}
+                        <tr>
+                            <td colspan="8" class="text-center text-secondary py-5">
+                                <i class="bi bi-inbox fs-1 d-block mb-2"></i>
+                                Tidak ada data barang untuk laporan ini.
+                            </td>
+                        </tr>
+                    {% endif %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<!-- ===== Riwayat barang masuk dan keluar ===== -->
+<div class="card shadow-sm mb-4">
+    <div class="card-header bg-white py-3 d-flex justify-content-between align-items-center">
+        <span class="fw-semibold"><i class="bi bi-arrow-left-right me-2 text-primary"></i>Riwayat Barang Masuk dan Keluar</span>
+        <span class="text-secondary small">100 transaksi terakhir</span>
+    </div>
+    <div class="card-body p-0">
+        <div class="table-responsive">
+            <table class="table table-striped table-hover align-middle mb-0">
+                <thead class="table-light">
+                    <tr>
+                        <th>Tanggal</th>
+                        <th>Jenis</th>
+                        <th>Kode</th>
+                        <th>Nama Barang</th>
+                        <th>Jumlah</th>
+                        <th>Keterangan</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% if riwayat_transaksi %}
+                        {% for t in riwayat_transaksi %}
+                        <tr>
+                            <td class="text-nowrap">{{ t['tanggal'] }}</td>
+                            <td>
+                                <span class="badge {{ 'text-bg-success' if t['jenis'] == 'masuk' else 'text-bg-danger' }}">
+                                    {{ 'Masuk' if t['jenis'] == 'masuk' else 'Keluar' }}
+                                </span>
+                            </td>
+                            <td>{{ t['kode_barang'] }}</td>
+                            <td class="fw-semibold">{{ t['nama_barang'] }}</td>
+                            <td>{{ t['jumlah'] }} unit</td>
+                            <td class="small">{{ t['keterangan'] or '-' }}</td>
+                        </tr>
+                        {% endfor %}
+                    {% else %}
+                        <tr>
+                            <td colspan="6" class="text-center text-secondary py-5">
+                                <i class="bi bi-inbox fs-1 d-block mb-2"></i>
+                                Tidak ada transaksi yang cocok dengan filter.
+                            </td>
+                        </tr>
+                    {% endif %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<!-- Blok tanda tangan, hanya tampil pada hasil cetak -->
+<div class="cetak-saja d-flex justify-content-between mt-5">
+    <div class="small text-secondary">Dicetak dari {{ nama_sistem }} pada {{ tanggal_hari_ini }}.</div>
+    <div class="text-center">
+        <div>Petugas Gudang</div>
+        <div class="mt-5">(......................................)</div>
+    </div>
+</div>
+{% endblock %}

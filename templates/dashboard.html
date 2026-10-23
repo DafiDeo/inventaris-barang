@@ -1,0 +1,169 @@
+{% extends "base.html" %}
+
+{% block title %}Dashboard{% endblock %}
+
+{% block content %}
+<div class="mb-4">
+    <h1 class="h4 mb-1 fw-bold">Dashboard</h1>
+    <p class="text-secondary mb-0">Ringkasan kondisi inventaris barang per tanggal {{ tanggal_hari_ini }}.</p>
+</div>
+
+<!-- ===== Kartu ringkasan jumlah barang ===== -->
+<div class="row g-3 mb-4">
+    <div class="col-12 col-sm-6 col-xl-3">
+        <div class="card shadow-sm h-100">
+            <div class="card-body d-flex align-items-center gap-3">
+                <span class="ikon-stat bg-primary bg-opacity-10 text-primary"><i class="bi bi-box-seam"></i></span>
+                <div>
+                    <div class="text-secondary small fw-semibold">Total Jenis Barang</div>
+                    <div class="fs-3 fw-bold lh-1">{{ total_jenis_barang }}</div>
+                    <div class="text-secondary small">jenis barang tercatat</div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-12 col-sm-6 col-xl-3">
+        <div class="card shadow-sm h-100">
+            <div class="card-body d-flex align-items-center gap-3">
+                <span class="ikon-stat bg-info bg-opacity-10 text-info"><i class="bi bi-stack"></i></span>
+                <div>
+                    <div class="text-secondary small fw-semibold">Total Unit Barang</div>
+                    <div class="fs-3 fw-bold lh-1">{{ total_unit_barang }}</div>
+                    <div class="text-secondary small">unit keseluruhan</div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-12 col-sm-6 col-xl-3">
+        <div class="card shadow-sm h-100">
+            <div class="card-body d-flex align-items-center gap-3">
+                <span class="ikon-stat bg-success bg-opacity-10 text-success"><i class="bi bi-box-arrow-in-down"></i></span>
+                <div>
+                    <div class="text-secondary small fw-semibold">Barang Masuk</div>
+                    <div class="fs-3 fw-bold lh-1">{{ total_barang_masuk }}</div>
+                    <div class="text-secondary small">unit diterima</div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-12 col-sm-6 col-xl-3">
+        <div class="card shadow-sm h-100">
+            <div class="card-body d-flex align-items-center gap-3">
+                <span class="ikon-stat bg-danger bg-opacity-10 text-danger"><i class="bi bi-box-arrow-up"></i></span>
+                <div>
+                    <div class="text-secondary small fw-semibold">Barang Keluar</div>
+                    <div class="fs-3 fw-bold lh-1">{{ total_barang_keluar }}</div>
+                    <div class="text-secondary small">unit dikeluarkan</div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- ===== Ringkasan barang berdasarkan kondisi ===== -->
+<div class="row g-3 mb-4">
+    {% for item in ringkasan_kondisi %}
+    <div class="col-12 col-md-4">
+        <div class="card shadow-sm h-100">
+            <div class="card-body">
+                <div class="d-flex justify-content-between align-items-center mb-2">
+                    <span class="fw-semibold">{{ item.kondisi }}</span>
+                    <span class="badge text-bg-{{ badge_kondisi(item.kondisi) }}">{{ item.jumlah_jenis }} jenis</span>
+                </div>
+                <div class="fs-2 fw-bold mb-2">{{ item.jumlah_unit }} <span class="fs-6 text-secondary fw-normal">unit</span></div>
+                <div class="progress" role="progressbar" aria-label="Proporsi {{ item.kondisi }}"
+                     aria-valuenow="{{ item.persen }}" aria-valuemin="0" aria-valuemax="100" style="height: 8px;">
+                    <div class="progress-bar bg-{{ badge_kondisi(item.kondisi) }}" style="width: {{ item.persen }}%;"></div>
+                </div>
+                <div class="text-secondary small mt-1">{{ item.persen }}% dari total jenis barang</div>
+            </div>
+        </div>
+    </div>
+    {% endfor %}
+</div>
+
+<!-- ===== Barang stok rendah + barang terbaru ===== -->
+<div class="row g-3">
+    <div class="col-12 col-lg-4">
+        <div class="card shadow-sm h-100">
+            <div class="card-header bg-white py-3 fw-semibold">
+                <i class="bi bi-exclamation-triangle text-warning me-2"></i>Barang Stok Rendah (&le; {{ batas_stok_rendah }} unit)
+            </div>
+            <div class="card-body p-0">
+                {% if barang_stok_rendah %}
+                    <ul class="list-group list-group-flush">
+                        {% for b in barang_stok_rendah %}
+                        <li class="list-group-item d-flex justify-content-between align-items-center">
+                            <div>
+                                <div class="fw-semibold small">{{ b['nama_barang'] }}</div>
+                                <small class="text-secondary">{{ b['kode_barang'] }} &mdash; {{ b['lokasi'] }}</small>
+                            </div>
+                            <span class="badge {{ 'text-bg-danger' if b['jumlah_stok'] == 0 else 'text-bg-warning' }}">
+                                {{ b['jumlah_stok'] }} unit
+                            </span>
+                        </li>
+                        {% endfor %}
+                    </ul>
+                    <div class="p-3 small text-secondary">
+                        Segera lakukan <a href="{{ url_for('barang_masuk') }}">transaksi barang masuk</a> untuk melengkapi stok.
+                    </div>
+                {% else %}
+                    <div class="p-4 text-center text-secondary">
+                        <i class="bi bi-check2-circle fs-1 text-success d-block mb-2"></i>
+                        Semua stok barang dalam kondisi aman.
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+
+    <div class="col-12 col-lg-8">
+        <div class="card shadow-sm h-100">
+            <div class="card-header bg-white py-3 d-flex justify-content-between align-items-center">
+                <span class="fw-semibold"><i class="bi bi-clock-history me-2 text-primary"></i>Barang Terbaru Ditambahkan</span>
+                <a href="{{ url_for('data_barang') }}" class="btn btn-sm btn-outline-primary">
+                    Lihat Semua <i class="bi bi-arrow-right"></i>
+                </a>
+            </div>
+            <div class="card-body p-0">
+                <div class="table-responsive">
+                    <table class="table table-hover align-middle mb-0">
+                        <thead class="table-light">
+                            <tr>
+                                <th>Nama Barang</th>
+                                <th>Kategori</th>
+                                <th>Lokasi</th>
+                                <th>Stok</th>
+                                <th>Kondisi</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% if barang_terbaru %}
+                                {% for b in barang_terbaru %}
+                                <tr>
+                                    <td>
+                                        <div class="fw-semibold">{{ b['nama_barang'] }}</div>
+                                        <small class="text-secondary">{{ b['kode_barang'] }}</small>
+                                    </td>
+                                    <td>{{ b['kategori'] }}</td>
+                                    <td>{{ b['lokasi'] }}</td>
+                                    <td>{{ b['jumlah_stok'] }}</td>
+                                    <td><span class="badge text-bg-{{ badge_kondisi(b['kondisi']) }}">{{ b['kondisi'] }}</span></td>
+                                </tr>
+                                {% endfor %}
+                            {% else %}
+                                <tr>
+                                    <td colspan="5" class="text-center text-secondary py-4">
+                                        <i class="bi bi-inbox fs-3 d-block mb-2"></i>
+                                        Belum ada data barang. <a href="{{ url_for('tambah_barang') }}">Tambahkan barang pertama</a>.
+                                    </td>
+                                </tr>
+                            {% endif %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

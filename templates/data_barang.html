@@ -1,0 +1,145 @@
+{% extends "base.html" %}
+
+{% block title %}Data Barang{% endblock %}
+
+{% block content %}
+<div class="d-flex flex-wrap justify-content-between align-items-center gap-2 mb-4">
+    <div>
+        <h1 class="h4 mb-1 fw-bold">Data Barang</h1>
+        <p class="text-secondary mb-0">Kelola seluruh data inventaris barang di sini.</p>
+    </div>
+    <a href="{{ url_for('tambah_barang') }}" class="btn btn-primary">
+        <i class="bi bi-plus-lg"></i> Tambah Barang
+    </a>
+</div>
+
+<!-- ===== Pencarian dan filter ===== -->
+<div class="card shadow-sm mb-4 tanpa-cetak">
+    <div class="card-body">
+        <form method="get" action="{{ url_for('data_barang') }}" class="row g-2 align-items-end">
+            <div class="col-12 col-md-4">
+                <label for="q" class="form-label small fw-semibold">Cari Nama / Kode Barang</label>
+                <input type="text" id="q" name="q" value="{{ q }}" class="form-control" placeholder="contoh: laptop atau INV-001">
+            </div>
+            <div class="col-6 col-md-3">
+                <label for="kategori" class="form-label small fw-semibold">Kategori</label>
+                <select id="kategori" name="kategori" class="form-select">
+                    <option value="">Semua Kategori</option>
+                    {% for k in daftar_kategori %}
+                    <option value="{{ k['kategori'] }}" {% if k['kategori'] == kategori %}selected{% endif %}>{{ k['kategori'] }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div class="col-6 col-md-3">
+                <label for="kondisi" class="form-label small fw-semibold">Kondisi</label>
+                <select id="kondisi" name="kondisi" class="form-select">
+                    <option value="">Semua Kondisi</option>
+                    {% for k in KONDISI_BARANG %}
+                    <option value="{{ k }}" {% if k == kondisi %}selected{% endif %}>{{ k }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div class="col-12 col-md-2 d-flex gap-2">
+                <button type="submit" class="btn btn-primary flex-fill"><i class="bi bi-funnel"></i> Terapkan</button>
+                <a href="{{ url_for('data_barang') }}" class="btn btn-outline-secondary" title="Bersihkan pencarian dan filter">
+                    <i class="bi bi-x-lg"></i>
+                </a>
+            </div>
+        </form>
+    </div>
+</div>
+
+<!-- ===== Tabel data barang ===== -->
+<div class="card shadow-sm">
+    <div class="card-header bg-white py-3 d-flex justify-content-between align-items-center">
+        <span class="fw-semibold"><i class="bi bi-table me-2 text-primary"></i>Daftar Barang</span>
+        <span class="text-secondary small">Menampilkan {{ daftar_barang|length }} barang</span>
+    </div>
+    <div class="card-body p-0">
+        <div class="table-responsive">
+            <table class="table table-hover align-middle mb-0">
+                <thead class="table-light">
+                    <tr>
+                        <th>No</th>
+                        <th>Kode</th>
+                        <th>Nama Barang</th>
+                        <th>Kategori</th>
+                        <th>Lokasi</th>
+                        <th>Stok</th>
+                        <th>Kondisi</th>
+                        <th>Tanggal</th>
+                        <th class="text-center">Aksi</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% if daftar_barang %}
+                        {% for barang in daftar_barang %}
+                        <tr>
+                            <td>{{ loop.index }}</td>
+                            <td><span class="badge text-bg-light border">{{ barang['kode_barang'] }}</span></td>
+                            <td class="fw-semibold">{{ barang['nama_barang'] }}</td>
+                            <td>{{ barang['kategori'] }}</td>
+                            <td>{{ barang['lokasi'] }}</td>
+                            <td>
+                                <span class="badge {{ 'text-bg-danger' if barang['jumlah_stok'] <= batas_stok_rendah else 'text-bg-primary' }}">
+                                    {{ barang['jumlah_stok'] }}
+                                </span>
+                            </td>
+                            <td><span class="badge text-bg-{{ badge_kondisi(barang['kondisi']) }}">{{ barang['kondisi'] }}</span></td>
+                            <td class="text-nowrap">{{ barang['tanggal_pencatatan'] }}</td>
+                            <td>
+                                <div class="d-flex justify-content-center gap-1">
+                                    <a href="{{ url_for('edit_barang', barang_id=barang['id']) }}"
+                                       class="btn btn-sm btn-outline-primary" title="Edit data barang">
+                                        <i class="bi bi-pencil"></i>
+                                    </a>
+                                    <button type="button" class="btn btn-sm btn-outline-danger" title="Hapus data barang"
+                                            data-bs-toggle="modal" data-bs-target="#modal-hapus"
+                                            data-nama="{{ barang['nama_barang'] }}"
+                                            data-url="{{ url_for('hapus_barang', barang_id=barang['id']) }}">
+                                        <i class="bi bi-trash"></i>
+                                    </button>
+                                </div>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    {% else %}
+                        <tr>
+                            <td colspan="9" class="text-center text-secondary py-5">
+                                <i class="bi bi-inbox fs-1 d-block mb-2"></i>
+                                Tidak ada data barang yang cocok dengan pencarian atau filter.
+                            </td>
+                        </tr>
+                    {% endif %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<!-- ===== Modal konfirmasi hapus ===== -->
+<div class="modal fade" id="modal-hapus" tabindex="-1" aria-labelledby="judul-modal-hapus" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="judul-modal-hapus">
+                    <i class="bi bi-exclamation-triangle text-danger me-2"></i>Konfirmasi Hapus
+                </h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Tutup"></button>
+            </div>
+            <div class="modal-body">
+                <p class="mb-2">Apakah Anda yakin ingin menghapus barang <strong id="nama-barang-hapus"></strong>?</p>
+                <p class="text-secondary small mb-0">
+                    Riwayat transaksi barang ini juga akan terhapus dan tindakan ini tidak dapat dibatalkan.
+                </p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Batal</button>
+                <form method="post" id="form-hapus" action="">
+                    <button type="submit" class="btn btn-danger"><i class="bi bi-trash"></i> Ya, Hapus</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

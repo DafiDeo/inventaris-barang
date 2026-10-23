@@ -1,0 +1,10 @@
+# Virtual environment
+venv/
+env/
+
+# Cache Python
+__pycache__/
+*.pyc
+
+# Database lokal (dibuat ulang otomatis saat aplikasi dijalankan)
+inventaris.db

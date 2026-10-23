@@ -1,0 +1,226 @@
+{% extends "base.html" %}
+
+{% block title %}{{ 'Profil' if halaman == 'profil' else 'Bantuan' }}{% endblock %}
+
+{% block content %}
+{% if halaman == 'profil' %}
+    <!-- ================= KONTEN HALAMAN PROFIL ================= -->
+    <div class="mb-4">
+        <h1 class="h4 mb-1 fw-bold">Profil Sistem</h1>
+        <p class="text-secondary mb-0">Informasi umum, tujuan, dan fungsi sistem.</p>
+    </div>
+
+    <div class="card shadow-sm mb-4">
+        <div class="card-body p-4">
+            <div class="d-flex align-items-center gap-3 mb-3">
+                <span class="ikon-stat bg-primary bg-opacity-10 text-primary"><i class="bi bi-boxes"></i></span>
+                <div>
+                    <h2 class="h5 fw-bold mb-1">{{ nama_sistem }}</h2>
+                    <span class="badge text-bg-primary">Proyek ETS</span>
+                    <span class="badge text-bg-light border">Versi 1.0</span>
+                </div>
+            </div>
+            <p class="mb-2">
+                {{ nama_sistem }} adalah aplikasi web yang dibangun untuk membantu petugas gudang
+                dalam mengelola data inventaris barang secara terpusat dan teratur. Sistem ini
+                menyediakan pencatatan master data barang, pemantauan jumlah dan kondisi barang,
+                pencatatan transaksi barang masuk dan keluar, serta penyajian laporan inventaris
+                yang siap dicetak.
+            </p>
+            <p class="mb-0">
+                Seluruh data tersimpan secara lokal menggunakan database SQLite sehingga aplikasi
+                dapat dijalankan tanpa layanan server tambahan. Antarmuka dibangun dengan Flask,
+                Jinja2, dan Bootstrap 5 agar ringan, responsif, dan mudah digunakan baik pada
+                komputer, tablet, maupun ponsel.
+            </p>
+        </div>
+    </div>
+
+    <div class="row g-4 mb-4">
+        <div class="col-12 col-lg-6">
+            <div class="card shadow-sm h-100">
+                <div class="card-header bg-white py-3 fw-semibold">
+                    <i class="bi bi-bullseye me-2 text-primary"></i>Tujuan Sistem
+                </div>
+                <div class="card-body">
+                    <ul class="mb-0 ps-3">
+                        <li class="mb-2">Mempermudah petugas mencatat dan mengelola data inventaris barang dalam satu sistem terpusat.</li>
+                        <li class="mb-2">Memantau jumlah stok dan kondisi barang (Baik, Rusak Ringan, Rusak Berat) secara real-time.</li>
+                        <li class="mb-2">Menghindari kesalahan pencatatan stok melalui validasi input dan transaksi otomatis.</li>
+                        <li class="mb-2">Menyediakan laporan inventaris yang cepat disusun dan siap dicetak untuk kebutuhan administrasi.</li>
+                        <li>Membantu pengambilan keputusan, misalnya melalui informasi barang dengan stok rendah.</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+        <div class="col-12 col-lg-6">
+            <div class="card shadow-sm h-100">
+                <div class="card-header bg-white py-3 fw-semibold">
+                    <i class="bi bi-gear me-2 text-primary"></i>Fungsi Utama Sistem
+                </div>
+                <div class="card-body">
+                    <ul class="mb-0 ps-3">
+                        <li class="mb-2">Dashboard ringkasan jumlah barang, kondisi barang, serta barang masuk dan keluar.</li>
+                        <li class="mb-2">Manajemen data barang: tambah, edit, hapus, cari, dan filter.</li>
+                        <li class="mb-2">Pencatatan transaksi barang masuk dan barang keluar dengan perubahan stok otomatis.</li>
+                        <li class="mb-2">Laporan inventaris lengkap dengan ringkasan kondisi dan riwayat transaksi.</li>
+                        <li>Halaman profil sistem dan panduan penggunaan untuk memudahkan pengguna baru.</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="card shadow-sm">
+        <div class="card-header bg-white py-3 fw-semibold">
+            <i class="bi bi-code-slash me-2 text-primary"></i>Teknologi yang Digunakan
+        </div>
+        <div class="card-body d-flex flex-wrap gap-2">
+            <span class="badge text-bg-primary">Python 3 + Flask</span>
+            <span class="badge text-bg-dark">SQLite</span>
+            <span class="badge text-bg-secondary">Jinja2</span>
+            <span class="badge text-bg-info">Bootstrap 5</span>
+            <span class="badge text-bg-light border">Bootstrap Icons</span>
+            <span class="badge text-bg-light border">HTML5 + CSS3 + JavaScript</span>
+            <span class="badge text-bg-light border">Visual Studio Code</span>
+        </div>
+    </div>
+
+{% else %}
+    <!-- ================= KONTEN HALAMAN BANTUAN ================= -->
+    <div class="mb-4">
+        <h1 class="h4 mb-1 fw-bold">Bantuan &amp; Panduan Penggunaan</h1>
+        <p class="text-secondary mb-0">Ikuti langkah-langkah berikut untuk menggunakan sistem dengan benar.</p>
+    </div>
+
+    <div class="accordion shadow-sm" id="akordeon-bantuan">
+
+        <div class="accordion-item">
+            <h2 class="accordion-header" id="judul-1">
+                <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#panel-1"
+                        aria-expanded="true" aria-controls="panel-1">
+                    <i class="bi bi-compass me-2"></i> 1. Mengenal Halaman Dashboard dan Navigasi
+                </button>
+            </h2>
+            <div id="panel-1" class="accordion-collapse collapse show" aria-labelledby="judul-1" data-bs-parent="#akordeon-bantuan">
+                <div class="accordion-body">
+                    <p class="mb-2">
+                        Dashboard adalah halaman pertama yang tampil saat sistem dibuka. Halaman ini
+                        menampilkan ringkasan total jenis dan unit barang, jumlah barang masuk dan keluar,
+                        ringkasan kondisi barang, daftar barang dengan stok rendah, serta tabel barang
+                        yang terbaru ditambahkan.
+                    </p>
+                    <ol class="mb-0 ps-3">
+                        <li class="mb-1">Gunakan menu di <strong>sidebar kiri</strong> untuk berpindah halaman.</li>
+                        <li class="mb-1">Klik <strong>Manajemen Data</strong>, <strong>Transaksi</strong>, atau <strong>Laporan</strong> untuk membuka submenu.</li>
+                        <li class="mb-1">Tombol <strong>hamburger (&#9776;)</strong> pada navbar atas berfungsi menyembunyikan atau menampilkan sidebar. Pada ponsel, sidebar terbuka di atas konten.</li>
+                        <li>Pesan notifikasi hijau/merah di bagian atas konten akan muncul setelah setiap aksi dan hilang otomatis beberapa detik kemudian.</li>
+                    </ol>
+                </div>
+            </div>
+        </div>
+
+        <div class="accordion-item">
+            <h2 class="accordion-header" id="judul-2">
+                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#panel-2"
+                        aria-expanded="false" aria-controls="panel-2">
+                    <i class="bi bi-box-seam me-2"></i> 2. Mengelola Data Barang
+                </button>
+            </h2>
+            <div id="panel-2" class="accordion-collapse collapse" aria-labelledby="judul-2" data-bs-parent="#akordeon-bantuan">
+                <div class="accordion-body">
+                    <p class="mb-2">Seluruh pengelolaan data barang berada di menu <strong>Manajemen Data</strong>.</p>
+                    <p class="fw-semibold mb-1">Menambah barang baru:</p>
+                    <ol class="mb-2 ps-3">
+                        <li class="mb-1">Buka menu <strong>Manajemen Data &rarr; Tambah Barang</strong> (atau tombol "Tambah Barang" pada halaman Data Barang).</li>
+                        <li class="mb-1">Isi kode barang, nama barang, kategori, lokasi, jumlah stok, kondisi, dan tanggal pencatatan. Kolom bertanda <span class="text-danger fw-bold">*</span> wajib diisi.</li>
+                        <li class="mb-1">Klik <strong>Simpan</strong>. Notifikasi hijau akan muncul jika berhasil.</li>
+                    </ol>
+                    <p class="fw-semibold mb-1">Mengedit dan menghapus barang:</p>
+                    <ol class="mb-2 ps-3">
+                        <li class="mb-1">Buka halaman <strong>Data Barang</strong>, lalu klik tombol <strong>ikon pensil</strong> pada baris barang yang ingin diubah, perbaiki datanya, dan klik "Simpan Perubahan".</li>
+                        <li class="mb-1">Untuk menghapus, klik tombol <strong>ikon tempat sampah</strong>, konfirmasi pada jendela modal yang muncul, lalu klik "Ya, Hapus".</li>
+                    </ol>
+                    <p class="fw-semibold mb-1">Mencari dan memfilter:</p>
+                    <ol class="mb-0 ps-3">
+                        <li class="mb-1">Ketik nama atau kode barang pada kolom pencarian, pilih kategori dan/atau kondisi, lalu klik <strong>Terapkan</strong>.</li>
+                        <li>Klik tombol <strong>X</strong> untuk mengosongkan kembali pencarian dan filter.</li>
+                    </ol>
+                </div>
+            </div>
+        </div>
+
+        <div class="accordion-item">
+            <h2 class="accordion-header" id="judul-3">
+                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#panel-3"
+                        aria-expanded="false" aria-controls="panel-3">
+                    <i class="bi bi-box-arrow-in-down me-2"></i> 3. Mencatat Barang Masuk
+                </button>
+            </h2>
+            <div id="panel-3" class="accordion-collapse collapse" aria-labelledby="judul-3" data-bs-parent="#akordeon-bantuan">
+                <div class="accordion-body">
+                    <p class="mb-2">
+                        Fitur ini digunakan setiap kali barang diterima, misalnya dari supplier atau
+                        pengadaan baru. Stok barang akan bertambah otomatis sesuai jumlah yang dicatat.
+                    </p>
+                    <ol class="mb-0 ps-3">
+                        <li class="mb-1">Buka menu <strong>Transaksi &rarr; Barang Masuk</strong>.</li>
+                        <li class="mb-1">Pilih barang pada daftar. Informasi stok saat ini akan ditampilkan di bawah pilihan.</li>
+                        <li class="mb-1">Isi jumlah barang yang diterima (angka lebih dari 0), tanggal transaksi, dan keterangan bila perlu.</li>
+                        <li class="mb-1">Klik <strong>Simpan Transaksi Barang Masuk</strong>. Riwayat di sebelah kanan langsung diperbarui.</li>
+                        <li>Periksa stok terbaru pada halaman <strong>Data Barang</strong> untuk memastikan pencatatan berhasil.</li>
+                    </ol>
+                </div>
+            </div>
+        </div>
+
+        <div class="accordion-item">
+            <h2 class="accordion-header" id="judul-4">
+                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#panel-4"
+                        aria-expanded="false" aria-controls="panel-4">
+                    <i class="bi bi-box-arrow-up me-2"></i> 4. Mencatat Barang Keluar
+                </button>
+            </h2>
+            <div id="panel-4" class="accordion-collapse collapse" aria-labelledby="judul-4" data-bs-parent="#akordeon-bantuan">
+                <div class="accordion-body">
+                    <p class="mb-2">
+                        Fitur ini digunakan setiap kali barang dikeluarkan, misalnya dipakai atau dipinjam.
+                        Sistem otomatis mengurangi stok dan akan <strong>menolak transaksi</strong> jika jumlah
+                        keluar melebihi stok yang tersedia.
+                    </p>
+                    <ol class="mb-0 ps-3">
+                        <li class="mb-1">Buka menu <strong>Transaksi &rarr; Barang Keluar</strong>.</li>
+                        <li class="mb-1">Pilih barang dan perhatikan informasi <strong>stok tersedia</strong> yang muncul di bawah pilihan.</li>
+                        <li class="mb-1">Isi jumlah barang yang keluar dengan nilai tidak melebihi stok tersedia, lalu isi tanggal dan keterangan.</li>
+                        <li class="mb-1">Klik <strong>Simpan Transaksi Barang Keluar</strong>. Jika stok tidak mencukupi, notifikasi merah akan muncul dan transaksi tidak tersimpan.</li>
+                        <li>Riwayat transaksi keluar dapat dilihat pada tabel di sebelah kanan maupun pada halaman Laporan.</li>
+                    </ol>
+                </div>
+            </div>
+        </div>
+
+        <div class="accordion-item">
+            <h2 class="accordion-header" id="judul-5">
+                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#panel-5"
+                        aria-expanded="false" aria-controls="panel-5">
+                    <i class="bi bi-printer me-2"></i> 5. Melihat dan Mencetak Laporan
+                </button>
+            </h2>
+            <div id="panel-5" class="accordion-collapse collapse" aria-labelledby="judul-5" data-bs-parent="#akordeon-bantuan">
+                <div class="accordion-body">
+                    <p class="mb-2">
+                        Halaman <strong>Laporan &rarr; Laporan Inventaris</strong> menyajikan ringkasan
+                        kondisi barang, daftar seluruh barang, dan riwayat transaksi masuk/keluar.
+                    </p>
+                    <ol class="mb-0 ps-3">
+                        <li class="mb-1">Gunakan filter kategori, kondisi, jenis transaksi, serta rentang tanggal untuk menyaring isi laporan, lalu klik <strong>Terapkan</strong>.</li>
+                        <li class="mb-1">Klik <strong>Cetak Laporan</strong> untuk membuka dialog cetak browser. Sidebar, navbar, dan tombol otomatis disembunyikan pada hasil cetak.</li>
+                        <li>Pada dialog cetak, pilih "Save as PDF" jika ingin menyimpan laporan sebagai berkas PDF.</li>
+                    </ol>
+                </div>
+            </div>
+        </div>
+
+    </div>
+{% endif %}
+{% endblock %}

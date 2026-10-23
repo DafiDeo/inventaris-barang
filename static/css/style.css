@@ -1,0 +1,340 @@
+/* =====================================================================
+   style.css - Sistem Informasi Manajemen Inventaris Barang
+   Kustomisasi tampilan di atas Bootstrap 5.
+   Palet warna: biru (primer), putih (kartu/konten), abu-abu (latar).
+   ===================================================================== */
+
+:root {
+    --lebar-sidebar: 264px;
+    --tinggi-navbar: 62px;
+    --warna-latar: #f3f6fb;        /* abu-abu kebiruan untuk latar konten */
+    --warna-aktif: #2f6fd6;        /* biru utama menu aktif */
+    --warna-teks-utama: #1e2a44;
+}
+
+body {
+    background-color: var(--warna-latar);
+    color: var(--warna-teks-utama);
+    font-family: "Segoe UI", system-ui, -apple-system, "Helvetica Neue", Arial, sans-serif;
+    min-height: 100vh;
+}
+
+/* ===================== SIDEBAR ===================== */
+.sidebar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    bottom: 0;
+    width: var(--lebar-sidebar);
+    background: linear-gradient(180deg, #1b2f57 0%, #14213d 100%);
+    color: #ffffff;
+    z-index: 1040;
+    display: flex;
+    flex-direction: column;
+    overflow-y: auto;
+    transition: margin-left 0.25s ease, transform 0.25s ease;
+}
+
+.sidebar-brand {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 18px 20px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.brand-ikon {
+    width: 42px;
+    height: 42px;
+    flex: 0 0 42px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    background: var(--warna-aktif);
+    color: #ffffff;
+    border-radius: 12px;
+    font-size: 20px;
+}
+
+.brand-judul {
+    font-weight: 700;
+    font-size: 1rem;
+    line-height: 1.2;
+}
+
+.brand-subjudul {
+    font-size: 0.72rem;
+    color: rgba(255, 255, 255, 0.55);
+}
+
+.sidebar-menu {
+    flex: 1;
+    padding: 14px 12px;
+}
+
+.sidebar-menu .menu-label {
+    font-size: 0.68rem;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: rgba(255, 255, 255, 0.4);
+    margin: 14px 12px 6px;
+}
+
+.sidebar-menu .nav-link {
+    color: rgba(255, 255, 255, 0.78);
+    padding: 10px 14px;
+    margin-bottom: 2px;
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 0.925rem;
+    transition: background 0.15s ease, color 0.15s ease;
+}
+
+.sidebar-menu .nav-link i:first-child {
+    font-size: 1.05rem;
+    width: 22px;
+    text-align: center;
+}
+
+.sidebar-menu .nav-link:hover {
+    background: rgba(255, 255, 255, 0.08);
+    color: #ffffff;
+}
+
+.sidebar-menu .nav-link.active {
+    background: var(--warna-aktif);
+    color: #ffffff;
+    font-weight: 600;
+}
+
+/* Item submenu */
+.sidebar-menu .nav-link.sub {
+    padding: 8px 14px 8px 48px;
+    font-size: 0.86rem;
+    color: rgba(255, 255, 255, 0.66);
+    position: relative;
+}
+
+.sidebar-menu .nav-link.sub::before {
+    content: "";
+    position: absolute;
+    left: 28px;
+    top: 50%;
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.35);
+    transform: translateY(-50%);
+}
+
+.sidebar-menu .nav-link.sub:hover {
+    color: #ffffff;
+}
+
+.sidebar-menu .nav-link.sub.active {
+    background: rgba(47, 111, 214, 0.28);
+    color: #ffffff;
+}
+
+.sidebar-menu .nav-link.sub.active::before {
+    background: #ffffff;
+}
+
+/* Panah submenu berputar saat terbuka */
+.sidebar-menu .panah {
+    font-size: 0.75rem;
+    transition: transform 0.2s ease;
+}
+
+.sidebar-menu .nav-link[aria-expanded="true"] .panah {
+    transform: rotate(180deg);
+}
+
+.sidebar-footer {
+    padding: 14px 20px;
+    font-size: 0.72rem;
+    line-height: 1.5;
+    color: rgba(255, 255, 255, 0.45);
+    border-top: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+/* ===================== AREA KONTEN ===================== */
+.main-content {
+    margin-left: var(--lebar-sidebar);
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    min-width: 0; /* mencegah tabel membuat halaman meluber */
+    transition: margin-left 0.25s ease;
+}
+
+.navbar {
+    height: var(--tinggi-navbar);
+    background: #ffffff;
+    border-bottom: 1px solid #e4e9f2;
+    position: sticky;
+    top: 0;
+    z-index: 1030;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 0 20px;
+}
+
+.navbar-judul {
+    font-weight: 700;
+    font-size: 0.98rem;
+    color: var(--warna-teks-utama);
+}
+
+.tanggal-hari-ini {
+    color: #5a6a85;
+    font-size: 0.85rem;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.badge-petugas {
+    background: #e8f0fe;
+    color: var(--warna-aktif);
+    font-weight: 600;
+    font-size: 0.8rem;
+    padding: 6px 12px;
+    border-radius: 20px;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.footer {
+    margin-top: auto;
+    padding: 16px 20px;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    gap: 6px;
+    color: #7b879b;
+    font-size: 0.8rem;
+    background: #ffffff;
+    border-top: 1px solid #e4e9f2;
+}
+
+.konten-halaman {
+    flex: 1;
+}
+
+/* ===================== KOMPONEN UMUM ===================== */
+.card {
+    border: 1px solid #e8edf5;
+    border-radius: 14px;
+}
+
+.card-header {
+    border-bottom: 1px solid #edf1f7;
+}
+
+.table thead th {
+    font-size: 0.72rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: #67748e;
+    white-space: nowrap;
+}
+
+.table td {
+    vertical-align: middle;
+}
+
+.ikon-stat {
+    width: 52px;
+    height: 52px;
+    flex: 0 0 52px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 14px;
+    font-size: 24px;
+}
+
+/* ===================== SIDEBAR COLAPSE (DESKTOP) ===================== */
+@media (min-width: 992px) {
+    body.sidebar-collapsed .sidebar {
+        margin-left: calc(-1 * var(--lebar-sidebar));
+    }
+    body.sidebar-collapsed .main-content {
+        margin-left: 0;
+    }
+}
+
+/* ===================== SIDEBAR OFF-CANVAS (PONSEL/TABLET) ===================== */
+@media (max-width: 991.98px) {
+    .sidebar {
+        transform: translateX(-100%);
+        margin-left: 0;
+    }
+    body.sidebar-open .sidebar {
+        transform: translateX(0);
+        box-shadow: 0 0 40px rgba(0, 0, 0, 0.3);
+    }
+    .main-content {
+        margin-left: 0 !important;
+    }
+    .sidebar-backdrop {
+        display: none;
+        position: fixed;
+        inset: 0;
+        background: rgba(15, 23, 42, 0.5);
+        z-index: 1035;
+    }
+    body.sidebar-open .sidebar-backdrop {
+        display: block;
+    }
+}
+
+/* ===================== GAYA CETAK LAPORAN ===================== */
+.cetak-saja {
+    display: none;
+}
+
+@media print {
+    .sidebar,
+    .navbar,
+    .sidebar-backdrop,
+    .footer,
+    .tanpa-cetak {
+        display: none !important;
+    }
+    .main-content {
+        margin: 0 !important;
+    }
+    body {
+        background: #ffffff !important;
+    }
+    .cetak-saja {
+        display: block !important;
+    }
+    .card {
+        border: 1px solid #cfd6e0 !important;
+        border-radius: 0 !important;
+        box-shadow: none !important;
+        break-inside: avoid;
+    }
+    .table-responsive {
+        overflow-x: visible !important;
+    }
+    tr {
+        break-inside: avoid;
+    }
+    a {
+        text-decoration: none !important;
+        color: inherit !important;
+    }
+    @page {
+        margin: 1.5cm;
+    }
+}

@@ -1,0 +1,105 @@
+{% extends "base.html" %}
+
+{% block title %}{{ 'Tambah Barang' if mode == 'tambah' else 'Edit Data Barang' }}{% endblock %}
+
+{% block content %}
+<div class="d-flex flex-wrap justify-content-between align-items-center gap-2 mb-4">
+    <div>
+        <h1 class="h4 mb-1 fw-bold">{{ 'Tambah Barang' if mode == 'tambah' else 'Edit Data Barang' }}</h1>
+        <p class="text-secondary mb-0">
+            Lengkapi kolom bertanda <span class="text-danger fw-bold">*</span> yang wajib diisi.
+        </p>
+    </div>
+    <nav aria-label="breadcrumb">
+        <ol class="breadcrumb mb-0">
+            <li class="breadcrumb-item"><a href="{{ url_for('data_barang') }}">Data Barang</a></li>
+            <li class="breadcrumb-item active" aria-current="page">{{ 'Tambah' if mode == 'tambah' else 'Edit' }}</li>
+        </ol>
+    </nav>
+</div>
+
+<div class="card shadow-sm">
+    <div class="card-header bg-white py-3 fw-semibold">
+        <i class="bi {{ 'bi-plus-circle text-primary' if mode == 'tambah' else 'bi-pencil text-primary' }} me-2"></i>
+        {{ 'Formulir Barang Baru' if mode == 'tambah' else 'Formulir Perubahan Data Barang' }}
+    </div>
+    <div class="card-body p-4">
+        <form method="post" class="form-validasi" novalidate
+              action="{{ url_for('tambah_barang') if mode == 'tambah' else url_for('edit_barang', barang_id=barang_id) }}">
+            <div class="row g-3">
+                <div class="col-12 col-md-6">
+                    <label for="kode_barang" class="form-label">Kode Barang <span class="text-danger">*</span></label>
+                    <input type="text" class="form-control" id="kode_barang" name="kode_barang" required
+                           value="{{ nilai['kode_barang'] }}" placeholder="contoh: INV-009">
+                    <div class="invalid-feedback">Kode barang wajib diisi.</div>
+                </div>
+                <div class="col-12 col-md-6">
+                    <label for="nama_barang" class="form-label">Nama Barang <span class="text-danger">*</span></label>
+                    <input type="text" class="form-control" id="nama_barang" name="nama_barang" required
+                           value="{{ nilai['nama_barang'] }}" placeholder="contoh: Laptop ASUS Vivobook">
+                    <div class="invalid-feedback">Nama barang wajib diisi.</div>
+                </div>
+                <div class="col-12 col-md-6">
+                    <label for="kategori" class="form-label">Kategori <span class="text-danger">*</span></label>
+                    <input type="text" class="form-control" id="kategori" name="kategori" required
+                           list="opsi-kategori" value="{{ nilai['kategori'] }}" placeholder="contoh: Elektronik">
+                    <div class="invalid-feedback">Kategori wajib diisi.</div>
+                </div>
+                <div class="col-12 col-md-6">
+                    <label for="lokasi" class="form-label">Lokasi Penyimpanan <span class="text-danger">*</span></label>
+                    <input type="text" class="form-control" id="lokasi" name="lokasi" required
+                           list="opsi-lokasi" value="{{ nilai['lokasi'] }}" placeholder="contoh: Gudang Utama">
+                    <div class="invalid-feedback">Lokasi penyimpanan wajib diisi.</div>
+                </div>
+                <div class="col-12 col-md-4">
+                    <label for="jumlah_stok" class="form-label">Jumlah Stok <span class="text-danger">*</span></label>
+                    <input type="number" class="form-control" id="jumlah_stok" name="jumlah_stok"
+                           min="0" step="1" required value="{{ nilai['jumlah_stok'] }}" placeholder="contoh: 10">
+                    <div class="invalid-feedback">Jumlah stok wajib diisi dengan angka 0 atau lebih.</div>
+                </div>
+                <div class="col-12 col-md-4">
+                    <label for="kondisi" class="form-label">Kondisi Barang <span class="text-danger">*</span></label>
+                    <select class="form-select" id="kondisi" name="kondisi" required>
+                        <option value="" {% if not nilai['kondisi'] %}selected{% endif %}>-- Pilih Kondisi --</option>
+                        {% for k in KONDISI_BARANG %}
+                        <option value="{{ k }}" {% if nilai['kondisi'] == k %}selected{% endif %}>{{ k }}</option>
+                        {% endfor %}
+                    </select>
+                    <div class="invalid-feedback">Kondisi barang wajib dipilih.</div>
+                </div>
+                <div class="col-12 col-md-4">
+                    <label for="tanggal_pencatatan" class="form-label">Tanggal Pencatatan <span class="text-danger">*</span></label>
+                    <input type="date" class="form-control" id="tanggal_pencatatan" name="tanggal_pencatatan" required
+                           value="{{ nilai['tanggal_pencatatan'] }}">
+                    <div class="invalid-feedback">Tanggal pencatatan wajib diisi.</div>
+                </div>
+            </div>
+
+            <hr class="my-4">
+            <div class="d-flex flex-wrap gap-2">
+                <button type="submit" class="btn btn-primary">
+                    <i class="bi bi-save"></i> {{ 'Simpan' if mode == 'tambah' else 'Simpan Perubahan' }}
+                </button>
+                <a href="{{ url_for('data_barang') }}" class="btn btn-outline-secondary">Batal</a>
+            </div>
+        </form>
+    </div>
+</div>
+
+<!-- Saran kategori dan lokasi (boleh diketik bebas, datalist hanya membantu) -->
+<datalist id="opsi-kategori">
+    <option value="Elektronik"></option>
+    <option value="Perabot Kantor"></option>
+    <option value="Alat Kebersihan"></option>
+    <option value="Alat Tulis Kantor"></option>
+</datalist>
+<datalist id="opsi-lokasi">
+    <option value="Gudang Utama"></option>
+    <option value="Ruang Administrasi"></option>
+    <option value="Ruang Laboratorium 1"></option>
+    <option value="Ruang Laboratorium 2"></option>
+    <option value="Ruang Kelas A"></option>
+    <option value="Ruang Kelas B"></option>
+    <option value="Ruang Arsip"></option>
+</datalist>
+{% endblock %}

@@ -1,0 +1,124 @@
+{% extends "base.html" %}
+
+{% set judul_transaksi = 'Barang Masuk' if mode == 'masuk' else 'Barang Keluar' %}
+
+{% block title %}{{ judul_transaksi }}{% endblock %}
+
+{% block content %}
+<div class="mb-4">
+    <h1 class="h4 mb-1 fw-bold">{{ judul_transaksi }}</h1>
+    <p class="text-secondary mb-0">
+        {% if mode == 'masuk' %}
+            Catat penerimaan barang ke dalam gudang. Stok barang akan bertambah secara otomatis.
+        {% else %}
+            Catat barang yang keluar dari gudang. Stok berkurang otomatis dan transaksi ditolak bila stok tidak mencukupi.
+        {% endif %}
+    </p>
+</div>
+
+<div class="row g-4">
+    <!-- ===== Formulir transaksi ===== -->
+    <div class="col-12 col-xl-5">
+        <div class="card shadow-sm">
+            <div class="card-header bg-white py-3 fw-semibold">
+                <i class="bi {{ 'bi-box-arrow-in-down text-success' if mode == 'masuk' else 'bi-box-arrow-up text-danger' }} me-2"></i>
+                Formulir {{ judul_transaksi }}
+            </div>
+            <div class="card-body p-4">
+                <form method="post" class="form-validasi" novalidate
+                      action="{{ url_for('barang_masuk') if mode == 'masuk' else url_for('barang_keluar') }}">
+                    <div class="mb-3">
+                        <label for="pilih-barang" class="form-label">Barang <span class="text-danger">*</span></label>
+                        <select class="form-select" id="pilih-barang" name="barang_id" required>
+                            <option value="">-- Pilih Barang --</option>
+                            {% for b in daftar_barang %}
+                            <option value="{{ b['id'] }}" data-stok="{{ b['jumlah_stok'] }}"
+                                    {% if nilai['barang_id']|string == b['id']|string %}selected{% endif %}>
+                                {{ b['kode_barang'] }} - {{ b['nama_barang'] }} (stok: {{ b['jumlah_stok'] }})
+                            </option>
+                            {% endfor %}
+                        </select>
+                        <div class="invalid-feedback">Silakan pilih barang.</div>
+                        <div class="form-text" id="info-stok"></div>
+                    </div>
+                    <div class="mb-3">
+                        <label for="input-jumlah" class="form-label">Jumlah <span class="text-danger">*</span></label>
+                        <input type="number" class="form-control" id="input-jumlah" name="jumlah"
+                               min="1" step="1" required value="{{ nilai['jumlah'] }}" placeholder="contoh: 5">
+                        <div class="invalid-feedback">Jumlah harus berupa angka lebih besar dari 0.</div>
+                    </div>
+                    <div class="mb-3">
+                        <label for="input-tanggal" class="form-label">Tanggal Transaksi <span class="text-danger">*</span></label>
+                        <input type="date" class="form-control" id="input-tanggal" name="tanggal" required
+                               value="{{ nilai['tanggal'] if nilai['tanggal'] else tanggal_iso_hari_ini }}">
+                        <div class="invalid-feedback">Tanggal transaksi wajib diisi.</div>
+                    </div>
+                    <div class="mb-3">
+                        <label for="input-keterangan" class="form-label">Keterangan</label>
+                        <textarea class="form-control" id="input-keterangan" name="keterangan" rows="2"
+                                  placeholder="contoh: {% if mode == 'masuk' %}barang datang dari supplier{% else %}dipakai untuk kegiatan kelas{% endif %}">{{ nilai['keterangan'] }}</textarea>
+                    </div>
+                    <button type="submit" class="btn {{ 'btn-success' if mode == 'masuk' else 'btn-danger' }} w-100">
+                        <i class="bi {{ 'bi-plus-circle' if mode == 'masuk' else 'bi-dash-circle' }}"></i>
+                        Simpan Transaksi {{ judul_transaksi }}
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- ===== Riwayat transaksi ===== -->
+    <div class="col-12 col-xl-7">
+        <div class="card shadow-sm h-100">
+            <div class="card-header bg-white py-3 d-flex justify-content-between align-items-center">
+                <span class="fw-semibold">
+                    <i class="bi bi-clock-history me-2 text-primary"></i>Riwayat 15 {{ judul_transaksi|lower }} Terakhir
+                </span>
+                <a href="{{ url_for('laporan') }}" class="btn btn-sm btn-outline-primary">
+                    Lihat Laporan <i class="bi bi-arrow-right"></i>
+                </a>
+            </div>
+            <div class="card-body p-0">
+                <div class="table-responsive">
+                    <table class="table table-hover align-middle mb-0">
+                        <thead class="table-light">
+                            <tr>
+                                <th>Tanggal</th>
+                                <th>Barang</th>
+                                <th>Jumlah</th>
+                                <th>Keterangan</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% if riwayat %}
+                                {% for t in riwayat %}
+                                <tr>
+                                    <td class="text-nowrap">{{ t['tanggal'] }}</td>
+                                    <td>
+                                        <div class="fw-semibold">{{ t['nama_barang'] }}</div>
+                                        <small class="text-secondary">{{ t['kode_barang'] }}</small>
+                                    </td>
+                                    <td>
+                                        <span class="badge {{ 'text-bg-success' if mode == 'masuk' else 'text-bg-danger' }}">
+                                            {{ '+' if mode == 'masuk' else '-' }}{{ t['jumlah'] }}
+                                        </span>
+                                    </td>
+                                    <td class="small">{{ t['keterangan'] or '-' }}</td>
+                                </tr>
+                                {% endfor %}
+                            {% else %}
+                                <tr>
+                                    <td colspan="4" class="text-center text-secondary py-5">
+                                        <i class="bi bi-inbox fs-1 d-block mb-2"></i>
+                                        Belum ada transaksi {{ judul_transaksi|lower }} yang tercatat.
+                                    </td>
+                                </tr>
+                            {% endif %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
