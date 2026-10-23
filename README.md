@@ -192,3 +192,5 @@ Gunakan checklist berikut untuk memverifikasi aplikasi sebelum dikumpulkan.
 
 - [ ] Mengakses tautan hapus dengan metode GET langsung tidak menghapus data (route hanya menerima POST)
 - [ ] Memasukkan teks pada kolom angka ditolak dengan pesan yang jelas
+#   i n v e n t a r i s - b a r a n g  
+ 
